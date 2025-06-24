@@ -7,7 +7,7 @@ class ChatService:
     @staticmethod
     def get_user_input() -> str:
         """Get user input from terminal with proper formatting."""
-        return input("\n🤖 Ask me about your finances (or type 'help' for commands): ").strip()
+        return input("\n🤖 Enter message: ").strip()
 
 
     @staticmethod
