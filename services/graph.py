@@ -1,7 +1,6 @@
-
-
 from typing import Final
 
+from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.graph import START, StateGraph
 from langgraph.graph.state import CompiledStateGraph
 
@@ -26,4 +25,6 @@ class GraphService:
             end_key=GraphService.__RETRIEVE_NODE,
         )
         
-        return graph_builder.compile()
+        memory: Final[InMemorySaver] = InMemorySaver()
+        
+        return graph_builder.compile(checkpointer=memory)
