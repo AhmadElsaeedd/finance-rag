@@ -6,15 +6,11 @@ from langchain_core.messages import BaseMessage
 from langchain_core.prompt_values import PromptValue
 from langchain_core.prompts import PromptTemplate
 from langchain_core.vectorstores import InMemoryVectorStore
-from pydantic import BaseModel
+
+from models.state import State
 
 
 class RAGService:
-    
-    class State(BaseModel):
-        question: str | None = None
-        context: list[Document] | None = None
-        answer: str | None = None
     
     def __init__(
         self,
@@ -27,7 +23,7 @@ class RAGService:
         self.prompt = prompt
         self.llm = llm
     
-    def retrieve(self, *, state: State) -> State:
+    def retrieve(self, state: State) -> State:
         if state.question is None:
             raise ValueError("Question is required to retrieve context.")
         
@@ -35,14 +31,14 @@ class RAGService:
             query=state.question,
         )
         
-        return self.State(
+        return State(
             question=state.question,
             context=retrieved_docs,
             answer=state.answer,
         )
 
 
-    def generate(self, *, state: State) -> State:
+    def generate(self, state: State) -> State:
         if state.context is None or len(state.context) == 0 or state.question is None:
             raise ValueError("Context and question are required to generate an answer.")
         
@@ -57,7 +53,7 @@ class RAGService:
         
         response: Final[BaseMessage] = self.llm.invoke(input=target_prompt)
         
-        return self.State(
+        return State(
             question=state.question,
             context=state.context,
             answer=response.content,
